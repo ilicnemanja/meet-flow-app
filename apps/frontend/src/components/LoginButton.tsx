@@ -2,8 +2,13 @@ import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 
 export const LoginButton = () => {
+  const handleLogin = () => {
+    window.location.href = "http://localhost:3000/auth/microsoft/login";
+  };
+
   return (
     <Button
+      onClick={handleLogin}
       className="
         absolute
         top-[58%]
