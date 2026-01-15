@@ -67,48 +67,9 @@ export class MicrosoftController {
       ].join(' '),
     });
 
-    const url = `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/oauth2/v2.0/authorize?${params}`;
+    const url = `https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?${params}`;
     return res.redirect(url);
   }
-
-  // @Get('callback')
-  // async callback(@Query('code') code: string) {
-  //   console.log('stiglo je', code);
-  //   const tokenResponse = await axios.post(
-  //     `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/oauth2/v2.0/token`,
-  //     new URLSearchParams({
-  //       client_id: process.env.MICROSOFT_CLIENT_ID!,
-  //       client_secret: process.env.MICROSOFT_CLIENT_SECRET!,
-  //       grant_type: 'authorization_code',
-  //       code,
-  //       redirect_uri: process.env.MICROSOFT_REDIRECT_URI!,
-  //       code_verifier: this.codeVerifier,
-  //       scope: [
-  //         'openid',
-  //         'profile',
-  //         'email',
-  //         'offline_access',
-  //         'Calendars.ReadWrite',
-  //       ].join(' '),
-  //     }),
-  //     { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } },
-  //   );
-
-  //   const { access_token, refresh_token, expires_in, id_token } =
-  //     tokenResponse.data;
-
-  //   console.log('Access Token:', access_token);
-  //   console.log('Refresh Token:', refresh_token);
-  //   console.log('Expires In:', expires_in);
-  //   console.log('ID Token:', id_token);
-
-  //   // 1. Verify ID token
-  //   // 2. Extract user identity
-  //   // 3. Store tokens securely
-  //   // 4. Create your own session / JWT
-
-  //   return { success: true };
-  // }
 
   @Get('callback')
   async callback(@Query('code') code: string, @Query('state') state: string) {
@@ -118,7 +79,7 @@ export class MicrosoftController {
 
     try {
       const tokenResponse = await axios.post(
-        `https://login.microsoftonline.com/${process.env.MICROSOFT_TENANT_ID}/oauth2/v2.0/token`,
+        `https://login.microsoftonline.com/consumers/oauth2/v2.0/token`,
         new URLSearchParams({
           client_id: process.env.MICROSOFT_CLIENT_ID!,
           client_secret: process.env.MICROSOFT_CLIENT_SECRET!,
@@ -165,6 +126,53 @@ export class MicrosoftController {
       console.error('Token request failed:', err.response?.data || err);
       throw new BadRequestException(
         err.response?.data || 'Authentication failed',
+      );
+    }
+  }
+
+  @Get('send-test-email')
+  async sendTestEmail(@Query('accessToken') accessToken: string) {
+    if (!accessToken) {
+      throw new BadRequestException('Access token is required');
+    }
+
+    try {
+      const response = await axios.post(
+        'https://graph.microsoft.com/v1.0/me/sendMail',
+        {
+          message: {
+            subject: 'Test email from NestJS 🚀',
+            body: {
+              contentType: 'Text',
+              content: 'If you are reading this, Graph mail sending works.',
+            },
+            toRecipients: [
+              {
+                emailAddress: {
+                  address: 'ilicnemanja.it@gmail.com',
+                },
+              },
+            ],
+          },
+          saveToSentItems: true,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+
+      return {
+        success: true,
+        status: response.status,
+      };
+    } catch (err: any) {
+      console.error('Send mail failed:', err.response?.data || err);
+
+      throw new BadRequestException(
+        err.response?.data || 'Failed to send email',
       );
     }
   }
