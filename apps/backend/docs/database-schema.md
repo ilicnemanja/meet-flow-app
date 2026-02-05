@@ -41,7 +41,7 @@ erDiagram
 
     engagement_attendees {
         uuid id PK
-        uuid engagement_id FK "UK"
+        uuid engagement_id FK
         uuid user_id FK
         uuid expert_id FK
         boolean is_expert
@@ -53,7 +53,7 @@ erDiagram
 
     engagement_events {
         uuid id PK
-        uuid engagement_id FK
+        uuid engagement_id FK "UK"
         enum sync_status
         text external_event_id
         timestamp created_at
