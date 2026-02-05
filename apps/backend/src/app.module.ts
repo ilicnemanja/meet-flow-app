@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MicrosoftModule } from './auth/microsoft/microsoft.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
-  imports: [MicrosoftModule],
+  imports: [AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

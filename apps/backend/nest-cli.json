@@ -3,6 +3,18 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "src",
   "compilerOptions": {
-    "deleteOutDir": true
+    "deleteOutDir": true,
+    "webpack": false
+  },
+  "projects": {
+    "microsoft-graph": {
+      "type": "library",
+      "root": "libs/microsoft-graph",
+      "entryFile": "index",
+      "sourceRoot": "libs/microsoft-graph/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/microsoft-graph/tsconfig.lib.json"
+      }
+    }
   }
 }
