@@ -4,7 +4,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
 @Module({
-  controllers: [AuthController, MicrosoftAuthModule],
+  imports: [MicrosoftAuthModule],
+  controllers: [AuthController],
   providers: [AuthService],
 })
 export class AuthModule {}
