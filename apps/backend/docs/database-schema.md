@@ -41,7 +41,7 @@ erDiagram
 
     engagement_attendees {
         uuid id PK
-        uuid engagement_id FK UK
+        uuid engagement_id FK "UK"
         uuid user_id FK
         uuid expert_id FK
         boolean is_expert
