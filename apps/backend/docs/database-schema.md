@@ -24,7 +24,7 @@ erDiagram
         varchar middle_name
         varchar last_name
         varchar full_name
-        varchar email
+        varchar email UK
         timestamp created_at
         timestamp updated_at
         timestamp deleted_at
@@ -41,7 +41,7 @@ erDiagram
 
     engagement_attendees {
         uuid id PK
-        uuid engagement_id FK
+        uuid engagement_id FK UK
         uuid user_id FK
         uuid expert_id FK
         boolean is_expert
