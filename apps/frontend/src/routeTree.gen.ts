@@ -10,43 +10,175 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as rootIndexRouteImport } from './routes/(root)/index'
-import { Route as rootCalendarIndexRouteImport } from './routes/(root)/calendar/index'
+import { Route as rootDashboardIndexRouteImport } from './routes/(root)/dashboard/index'
+import { Route as rootAuthCallbackIndexRouteImport } from './routes/(root)/auth-callback/index'
+import { Route as rootDashboardProfileIndexRouteImport } from './routes/(root)/dashboard/profile/index'
+import { Route as rootDashboardCalendarIndexRouteImport } from './routes/(root)/dashboard/calendar/index'
+import { Route as rootDashboardMailTrashIndexRouteImport } from './routes/(root)/dashboard/mail/trash/index'
+import { Route as rootDashboardMailSentIndexRouteImport } from './routes/(root)/dashboard/mail/sent/index'
+import { Route as rootDashboardMailJunkIndexRouteImport } from './routes/(root)/dashboard/mail/junk/index'
+import { Route as rootDashboardMailInboxIndexRouteImport } from './routes/(root)/dashboard/mail/inbox/index'
+import { Route as rootDashboardMailDraftsIndexRouteImport } from './routes/(root)/dashboard/mail/drafts/index'
+import { Route as rootDashboardMailComposeIndexRouteImport } from './routes/(root)/dashboard/mail/compose/index'
 
 const rootIndexRoute = rootIndexRouteImport.update({
   id: '/(root)/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const rootCalendarIndexRoute = rootCalendarIndexRouteImport.update({
-  id: '/(root)/calendar/',
-  path: '/calendar/',
+const rootDashboardIndexRoute = rootDashboardIndexRouteImport.update({
+  id: '/(root)/dashboard/',
+  path: '/dashboard/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const rootAuthCallbackIndexRoute = rootAuthCallbackIndexRouteImport.update({
+  id: '/(root)/auth-callback/',
+  path: '/auth-callback/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const rootDashboardProfileIndexRoute =
+  rootDashboardProfileIndexRouteImport.update({
+    id: '/(root)/dashboard/profile/',
+    path: '/dashboard/profile/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardCalendarIndexRoute =
+  rootDashboardCalendarIndexRouteImport.update({
+    id: '/(root)/dashboard/calendar/',
+    path: '/dashboard/calendar/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailTrashIndexRoute =
+  rootDashboardMailTrashIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/trash/',
+    path: '/dashboard/mail/trash/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailSentIndexRoute =
+  rootDashboardMailSentIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/sent/',
+    path: '/dashboard/mail/sent/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailJunkIndexRoute =
+  rootDashboardMailJunkIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/junk/',
+    path: '/dashboard/mail/junk/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailInboxIndexRoute =
+  rootDashboardMailInboxIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/inbox/',
+    path: '/dashboard/mail/inbox/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailDraftsIndexRoute =
+  rootDashboardMailDraftsIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/drafts/',
+    path: '/dashboard/mail/drafts/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const rootDashboardMailComposeIndexRoute =
+  rootDashboardMailComposeIndexRouteImport.update({
+    id: '/(root)/dashboard/mail/compose/',
+    path: '/dashboard/mail/compose/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof rootIndexRoute
-  '/calendar': typeof rootCalendarIndexRoute
+  '/auth-callback': typeof rootAuthCallbackIndexRoute
+  '/dashboard': typeof rootDashboardIndexRoute
+  '/dashboard/calendar': typeof rootDashboardCalendarIndexRoute
+  '/dashboard/profile': typeof rootDashboardProfileIndexRoute
+  '/dashboard/mail/compose': typeof rootDashboardMailComposeIndexRoute
+  '/dashboard/mail/drafts': typeof rootDashboardMailDraftsIndexRoute
+  '/dashboard/mail/inbox': typeof rootDashboardMailInboxIndexRoute
+  '/dashboard/mail/junk': typeof rootDashboardMailJunkIndexRoute
+  '/dashboard/mail/sent': typeof rootDashboardMailSentIndexRoute
+  '/dashboard/mail/trash': typeof rootDashboardMailTrashIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof rootIndexRoute
-  '/calendar': typeof rootCalendarIndexRoute
+  '/auth-callback': typeof rootAuthCallbackIndexRoute
+  '/dashboard': typeof rootDashboardIndexRoute
+  '/dashboard/calendar': typeof rootDashboardCalendarIndexRoute
+  '/dashboard/profile': typeof rootDashboardProfileIndexRoute
+  '/dashboard/mail/compose': typeof rootDashboardMailComposeIndexRoute
+  '/dashboard/mail/drafts': typeof rootDashboardMailDraftsIndexRoute
+  '/dashboard/mail/inbox': typeof rootDashboardMailInboxIndexRoute
+  '/dashboard/mail/junk': typeof rootDashboardMailJunkIndexRoute
+  '/dashboard/mail/sent': typeof rootDashboardMailSentIndexRoute
+  '/dashboard/mail/trash': typeof rootDashboardMailTrashIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(root)/': typeof rootIndexRoute
-  '/(root)/calendar/': typeof rootCalendarIndexRoute
+  '/(root)/auth-callback/': typeof rootAuthCallbackIndexRoute
+  '/(root)/dashboard/': typeof rootDashboardIndexRoute
+  '/(root)/dashboard/calendar/': typeof rootDashboardCalendarIndexRoute
+  '/(root)/dashboard/profile/': typeof rootDashboardProfileIndexRoute
+  '/(root)/dashboard/mail/compose/': typeof rootDashboardMailComposeIndexRoute
+  '/(root)/dashboard/mail/drafts/': typeof rootDashboardMailDraftsIndexRoute
+  '/(root)/dashboard/mail/inbox/': typeof rootDashboardMailInboxIndexRoute
+  '/(root)/dashboard/mail/junk/': typeof rootDashboardMailJunkIndexRoute
+  '/(root)/dashboard/mail/sent/': typeof rootDashboardMailSentIndexRoute
+  '/(root)/dashboard/mail/trash/': typeof rootDashboardMailTrashIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/calendar'
+  fullPaths:
+    | '/'
+    | '/auth-callback'
+    | '/dashboard'
+    | '/dashboard/calendar'
+    | '/dashboard/profile'
+    | '/dashboard/mail/compose'
+    | '/dashboard/mail/drafts'
+    | '/dashboard/mail/inbox'
+    | '/dashboard/mail/junk'
+    | '/dashboard/mail/sent'
+    | '/dashboard/mail/trash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/calendar'
-  id: '__root__' | '/(root)/' | '/(root)/calendar/'
+  to:
+    | '/'
+    | '/auth-callback'
+    | '/dashboard'
+    | '/dashboard/calendar'
+    | '/dashboard/profile'
+    | '/dashboard/mail/compose'
+    | '/dashboard/mail/drafts'
+    | '/dashboard/mail/inbox'
+    | '/dashboard/mail/junk'
+    | '/dashboard/mail/sent'
+    | '/dashboard/mail/trash'
+  id:
+    | '__root__'
+    | '/(root)/'
+    | '/(root)/auth-callback/'
+    | '/(root)/dashboard/'
+    | '/(root)/dashboard/calendar/'
+    | '/(root)/dashboard/profile/'
+    | '/(root)/dashboard/mail/compose/'
+    | '/(root)/dashboard/mail/drafts/'
+    | '/(root)/dashboard/mail/inbox/'
+    | '/(root)/dashboard/mail/junk/'
+    | '/(root)/dashboard/mail/sent/'
+    | '/(root)/dashboard/mail/trash/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   rootIndexRoute: typeof rootIndexRoute
-  rootCalendarIndexRoute: typeof rootCalendarIndexRoute
+  rootAuthCallbackIndexRoute: typeof rootAuthCallbackIndexRoute
+  rootDashboardIndexRoute: typeof rootDashboardIndexRoute
+  rootDashboardCalendarIndexRoute: typeof rootDashboardCalendarIndexRoute
+  rootDashboardProfileIndexRoute: typeof rootDashboardProfileIndexRoute
+  rootDashboardMailComposeIndexRoute: typeof rootDashboardMailComposeIndexRoute
+  rootDashboardMailDraftsIndexRoute: typeof rootDashboardMailDraftsIndexRoute
+  rootDashboardMailInboxIndexRoute: typeof rootDashboardMailInboxIndexRoute
+  rootDashboardMailJunkIndexRoute: typeof rootDashboardMailJunkIndexRoute
+  rootDashboardMailSentIndexRoute: typeof rootDashboardMailSentIndexRoute
+  rootDashboardMailTrashIndexRoute: typeof rootDashboardMailTrashIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -58,11 +190,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof rootIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(root)/calendar/': {
-      id: '/(root)/calendar/'
-      path: '/calendar'
-      fullPath: '/calendar'
-      preLoaderRoute: typeof rootCalendarIndexRouteImport
+    '/(root)/dashboard/': {
+      id: '/(root)/dashboard/'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof rootDashboardIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/auth-callback/': {
+      id: '/(root)/auth-callback/'
+      path: '/auth-callback'
+      fullPath: '/auth-callback'
+      preLoaderRoute: typeof rootAuthCallbackIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/profile/': {
+      id: '/(root)/dashboard/profile/'
+      path: '/dashboard/profile'
+      fullPath: '/dashboard/profile'
+      preLoaderRoute: typeof rootDashboardProfileIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/calendar/': {
+      id: '/(root)/dashboard/calendar/'
+      path: '/dashboard/calendar'
+      fullPath: '/dashboard/calendar'
+      preLoaderRoute: typeof rootDashboardCalendarIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/trash/': {
+      id: '/(root)/dashboard/mail/trash/'
+      path: '/dashboard/mail/trash'
+      fullPath: '/dashboard/mail/trash'
+      preLoaderRoute: typeof rootDashboardMailTrashIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/sent/': {
+      id: '/(root)/dashboard/mail/sent/'
+      path: '/dashboard/mail/sent'
+      fullPath: '/dashboard/mail/sent'
+      preLoaderRoute: typeof rootDashboardMailSentIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/junk/': {
+      id: '/(root)/dashboard/mail/junk/'
+      path: '/dashboard/mail/junk'
+      fullPath: '/dashboard/mail/junk'
+      preLoaderRoute: typeof rootDashboardMailJunkIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/inbox/': {
+      id: '/(root)/dashboard/mail/inbox/'
+      path: '/dashboard/mail/inbox'
+      fullPath: '/dashboard/mail/inbox'
+      preLoaderRoute: typeof rootDashboardMailInboxIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/drafts/': {
+      id: '/(root)/dashboard/mail/drafts/'
+      path: '/dashboard/mail/drafts'
+      fullPath: '/dashboard/mail/drafts'
+      preLoaderRoute: typeof rootDashboardMailDraftsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(root)/dashboard/mail/compose/': {
+      id: '/(root)/dashboard/mail/compose/'
+      path: '/dashboard/mail/compose'
+      fullPath: '/dashboard/mail/compose'
+      preLoaderRoute: typeof rootDashboardMailComposeIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -70,7 +265,16 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   rootIndexRoute: rootIndexRoute,
-  rootCalendarIndexRoute: rootCalendarIndexRoute,
+  rootAuthCallbackIndexRoute: rootAuthCallbackIndexRoute,
+  rootDashboardIndexRoute: rootDashboardIndexRoute,
+  rootDashboardCalendarIndexRoute: rootDashboardCalendarIndexRoute,
+  rootDashboardProfileIndexRoute: rootDashboardProfileIndexRoute,
+  rootDashboardMailComposeIndexRoute: rootDashboardMailComposeIndexRoute,
+  rootDashboardMailDraftsIndexRoute: rootDashboardMailDraftsIndexRoute,
+  rootDashboardMailInboxIndexRoute: rootDashboardMailInboxIndexRoute,
+  rootDashboardMailJunkIndexRoute: rootDashboardMailJunkIndexRoute,
+  rootDashboardMailSentIndexRoute: rootDashboardMailSentIndexRoute,
+  rootDashboardMailTrashIndexRoute: rootDashboardMailTrashIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

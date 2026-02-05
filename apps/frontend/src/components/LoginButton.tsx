@@ -1,9 +1,11 @@
 import { Button } from "./ui/button";
 import { ArrowRight } from "lucide-react";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+
 export const LoginButton = () => {
   const handleLogin = () => {
-    window.location.href = "http://localhost:3000/auth/microsoft/login";
+    window.location.href = `${API_BASE_URL}/auth/microsoft/login`;
   };
 
   return (
