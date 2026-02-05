@@ -1,6 +1,7 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseEntity } from 'src/common/db/base-entity';
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { Engagement } from './engagement.entity';
+import { Engagement } from '../../../entities/engagement.entity';
 
 export enum SyncStatus {
   PENDING = 'pending',
@@ -10,6 +11,11 @@ export enum SyncStatus {
 
 @Entity('engagement_events')
 export class EngagementEvent extends BaseEntity {
+  @ApiProperty({
+    description: 'Sync status of the event',
+    enum: SyncStatus,
+    default: SyncStatus.PENDING,
+  })
   @Column({
     name: 'sync_status',
     type: 'enum',
@@ -18,6 +24,10 @@ export class EngagementEvent extends BaseEntity {
   })
   syncStatus: SyncStatus;
 
+  @ApiPropertyOptional({
+    description: 'External provider event ID (e.g., Microsoft Graph event ID)',
+    nullable: true,
+  })
   @Column({
     name: 'external_event_id',
     type: 'text',
@@ -26,9 +36,11 @@ export class EngagementEvent extends BaseEntity {
   })
   externalEventId: string | null;
 
+  @ApiProperty({ description: 'Engagement ID', format: 'uuid' })
   @Column({ name: 'engagement_id', type: 'uuid', unique: true })
   engagementId: string;
 
+  @ApiPropertyOptional({ description: 'Associated engagement', type: () => Engagement })
   @OneToOne(() => Engagement, (engagement) => engagement.event)
   @JoinColumn({ name: 'engagement_id' })
   engagement: Engagement;

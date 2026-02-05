@@ -1,26 +1,23 @@
-import { Injectable } from '@nestjs/common';
-import { CreateExpertDto } from './dto/create-expert.dto';
-import { UpdateExpertDto } from './dto/update-expert.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { ExpertsRepository } from './expets.repository';
+import { QueryExpertDto } from './dto/query-expert.dto';
+import { PaginatedResponseDto } from '../common/db/base-query-dto';
+import { Expert } from './entities/expert.entity';
 
 @Injectable()
 export class ExpertsService {
-  create(createExpertDto: CreateExpertDto) {
-    return 'This action adds a new expert';
+  constructor(private readonly expertsRepository: ExpertsRepository) {}
+
+  async findAll(query: QueryExpertDto): Promise<PaginatedResponseDto<Expert>> {
+    const { data, totalCount } = await this.expertsRepository.findAll(query);
+    return new PaginatedResponseDto(data, totalCount, query);
   }
 
-  findAll() {
-    return `This action returns all experts`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} expert`;
-  }
-
-  update(id: number, updateExpertDto: UpdateExpertDto) {
-    return `This action updates a #${id} expert`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} expert`;
+  async findOne(id: string): Promise<Expert> {
+    const expert = await this.expertsRepository.findOne(id);
+    if (!expert) {
+      throw new NotFoundException(`Expert with ID "${id}" not found`);
+    }
+    return expert;
   }
 }

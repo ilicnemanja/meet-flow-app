@@ -1,0 +1,22 @@
+INSERT INTO experts (id, first_name, middle_name, last_name, full_name, email, created_at, updated_at)
+VALUES
+  (gen_random_uuid(), 'John', NULL, 'Smith', 'John Smith', 'john.smith@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Sarah', 'Elizabeth', 'Johnson', 'Sarah Elizabeth Johnson', 'sarah.johnson@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Michael', NULL, 'Williams', 'Michael Williams', 'michael.williams@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Emily', 'Rose', 'Brown', 'Emily Rose Brown', 'emily.brown@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'David', NULL, 'Garcia', 'David Garcia', 'david.garcia@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Jessica', 'Marie', 'Martinez', 'Jessica Marie Martinez', 'jessica.martinez@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Christopher', NULL, 'Anderson', 'Christopher Anderson', 'christopher.anderson@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Amanda', 'Lynn', 'Taylor', 'Amanda Lynn Taylor', 'amanda.taylor@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'James', NULL, 'Thomas', 'James Thomas', 'james.thomas@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Ashley', 'Nicole', 'Jackson', 'Ashley Nicole Jackson', 'ashley.jackson@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Robert', NULL, 'White', 'Robert White', 'robert.white@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Jennifer', 'Ann', 'Harris', 'Jennifer Ann Harris', 'jennifer.harris@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Daniel', NULL, 'Clark', 'Daniel Clark', 'daniel.clark@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Stephanie', 'Grace', 'Lewis', 'Stephanie Grace Lewis', 'stephanie.lewis@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Matthew', NULL, 'Robinson', 'Matthew Robinson', 'matthew.robinson@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Nicole', 'Jane', 'Walker', 'Nicole Jane Walker', 'nicole.walker@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Andrew', NULL, 'Hall', 'Andrew Hall', 'andrew.hall@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Rachel', 'Kate', 'Young', 'Rachel Kate Young', 'rachel.young@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'William', NULL, 'King', 'William King', 'william.king@example.com', NOW(), NOW()),
+  (gen_random_uuid(), 'Lauren', 'Michelle', 'Wright', 'Lauren Michelle Wright', 'lauren.wright@example.com', NOW(), NOW());

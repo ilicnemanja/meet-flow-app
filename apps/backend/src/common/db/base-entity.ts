@@ -1,3 +1,4 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import {
   CreateDateColumn,
   UpdateDateColumn,
@@ -6,9 +7,11 @@ import {
 } from 'typeorm';
 
 export abstract class BaseEntity {
+  @ApiProperty({ description: 'Unique identifier', format: 'uuid' })
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
+  @ApiProperty({ description: 'Creation timestamp' })
   @CreateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -16,6 +19,7 @@ export abstract class BaseEntity {
   })
   createdAt: Date;
 
+  @ApiProperty({ description: 'Last update timestamp' })
   @UpdateDateColumn({
     type: 'timestamp with time zone',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -24,6 +28,7 @@ export abstract class BaseEntity {
   })
   updatedAt: Date;
 
+  @ApiPropertyOptional({ description: 'Deletion timestamp (soft delete)' })
   @DeleteDateColumn({
     type: 'timestamp with time zone',
     nullable: true,
