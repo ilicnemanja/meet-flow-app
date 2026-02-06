@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EngagementsModule } from './engagements/engagements.module';
 import { UsersModule } from './users/users.module';
 import { ExpertsModule } from './experts/experts.module';
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import configuration from './common/config/configuration';
 
 @Module({
@@ -33,6 +34,7 @@ import configuration from './common/config/configuration';
     EngagementsModule,
     UsersModule,
     ExpertsModule,
+    SubscriptionsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
