@@ -39,7 +39,7 @@ export class EngagementsRepository {
   async findOne(id: string): Promise<Engagement | null> {
     return this.repository.findOne({
       where: { id },
-      relations: ['attendees', 'event'],
+      relations: ['attendees', 'attendees.user', 'attendees.expert', 'event'],
     });
   }
 

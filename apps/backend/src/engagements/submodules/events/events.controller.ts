@@ -9,19 +9,29 @@ import {
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { EngagementEvent } from './entities/event.entity';
+import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
 
 @ApiTags('Engagement Event')
+@ApiBearerAuth()
 @Controller('engagements/:engagementId/event')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create an event for an engagement' })
+  @ApiOperation({
+    summary: 'Create an event for an engagement and schedule in Outlook',
+  })
   @ApiParam({
     name: 'engagementId',
     description: 'Engagement ID',
@@ -29,7 +39,7 @@ export class EventsController {
   })
   @ApiResponse({
     status: 201,
-    description: 'Event created successfully',
+    description: 'Event created and scheduled in Outlook',
     type: EngagementEvent,
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
@@ -37,8 +47,13 @@ export class EventsController {
   create(
     @Param('engagementId') engagementId: string,
     @Body() createEventDto: CreateEventDto,
+    @CurrentUser() user: { microsoftHomeAccountId: string },
   ) {
-    return this.eventsService.create(engagementId, createEventDto);
+    return this.eventsService.create(
+      engagementId,
+      createEventDto,
+      user.microsoftHomeAccountId,
+    );
   }
 
   @Get()

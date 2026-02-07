@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { MicrosoftAuthModule, MicrosoftGraphModule } from '@microsoft/graph';
 import { EngagementsService } from './engagements.service';
 import { EngagementsController } from './engagements.controller';
 import { EngagementsRepository } from './engagements.repository';
@@ -16,6 +17,8 @@ import { EventsRepository } from './submodules/events/events.repository';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Engagement, EngagementAttendee, EngagementEvent]),
+    MicrosoftGraphModule,
+    MicrosoftAuthModule,
   ],
   controllers: [EngagementsController, AttendeesController, EventsController],
   providers: [

@@ -13,7 +13,14 @@ export default () => ({
     tenantId: process.env.MICROSOFT_TENANT_ID,
     redirectUri: process.env.MICROSOFT_REDIRECT_URI,
     authority: `https://login.microsoftonline.com/consumers`,
-    scopes: ['user.read', 'openid', 'profile', 'email', 'offline_access'],
+    scopes: [
+      'user.read',
+      'openid',
+      'profile',
+      'email',
+      'offline_access',
+      'Calendars.ReadWrite',
+    ],
   },
   jwt: {
     secret: process.env.JWT_SECRET,

@@ -36,11 +36,25 @@ export class EngagementEvent extends BaseEntity {
   })
   externalEventId: string | null;
 
+  @ApiPropertyOptional({
+    description: 'Online meeting URL (e.g., Teams join link)',
+    nullable: true,
+  })
+  @Column({
+    name: 'online_meeting_url',
+    type: 'text',
+    nullable: true,
+  })
+  onlineMeetingUrl: string | null;
+
   @ApiProperty({ description: 'Engagement ID', format: 'uuid' })
   @Column({ name: 'engagement_id', type: 'uuid', unique: true })
   engagementId: string;
 
-  @ApiPropertyOptional({ description: 'Associated engagement', type: () => Engagement })
+  @ApiPropertyOptional({
+    description: 'Associated engagement',
+    type: () => Engagement,
+  })
   @OneToOne(() => Engagement, (engagement) => engagement.event)
   @JoinColumn({ name: 'engagement_id' })
   engagement: Engagement;
