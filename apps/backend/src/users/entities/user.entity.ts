@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseEntity } from 'src/common/db/base-entity';
 import { Column, Entity } from 'typeorm';
 
@@ -15,4 +15,14 @@ export class User extends BaseEntity {
   @ApiProperty({ description: 'User email address' })
   @Column({ type: 'varchar', length: 255, unique: true })
   email: string;
+
+  @ApiPropertyOptional({ description: 'Microsoft account ID' })
+  @Column({
+    name: 'microsoft_id',
+    type: 'varchar',
+    length: 255,
+    nullable: true,
+    unique: true,
+  })
+  microsoftId: string | null;
 }

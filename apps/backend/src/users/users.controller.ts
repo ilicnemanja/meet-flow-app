@@ -9,6 +9,7 @@ import {
   Query,
   HttpCode,
   HttpStatus,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { UsersService } from './users.service';
@@ -16,11 +17,56 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { QueryUserDto } from './dto/query-user.dto';
 import { User } from './entities/user.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { MicrosoftAuthService, MicrosoftUserProfile } from '@microsoft/graph';
 
 @ApiTags('Users')
+@ApiBearerAuth()
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly microsoftAuthService: MicrosoftAuthService,
+  ) {}
+
+  @Get('me')
+  @ApiOperation({ summary: 'Get current logged-in user profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the current user profile',
+    type: User,
+  })
+  @ApiResponse({ status: 401, description: 'Unauthorized' })
+  getMe(@CurrentUser() user: { id: string }) {
+    return this.usersService.findOne(user.id);
+  }
+
+  @Get('profile')
+  @ApiOperation({ summary: 'Get current user Microsoft Graph profile' })
+  @ApiResponse({
+    status: 200,
+    description: 'Returns the Microsoft Graph profile',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized or Microsoft session expired',
+  })
+  async getMicrosoftProfile(
+    @CurrentUser() user: { microsoftHomeAccountId: string },
+  ): Promise<MicrosoftUserProfile> {
+    const tokenResult = await this.microsoftAuthService.refreshToken(
+      user.microsoftHomeAccountId,
+    );
+
+    if (!tokenResult) {
+      throw new UnauthorizedException(
+        'Microsoft session expired. Please log in again.',
+      );
+    }
+
+    return this.microsoftAuthService.getUserProfile(tokenResult.accessToken);
+  }
 
   @Post()
   @ApiOperation({ summary: 'Create a new user' })

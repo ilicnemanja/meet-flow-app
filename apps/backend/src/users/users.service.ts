@@ -27,6 +27,10 @@ export class UsersService {
     return user;
   }
 
+  async findByEmail(email: string): Promise<User | null> {
+    return this.usersRepository.findByEmail(email);
+  }
+
   async create(dto: CreateUserDto): Promise<User> {
     const existingUser = await this.usersRepository.findByEmail(dto.email);
     if (existingUser) {
