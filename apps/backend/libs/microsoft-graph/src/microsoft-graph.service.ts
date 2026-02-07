@@ -1,14 +1,25 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import {
   CreateOutlookEventDto,
   OutlookEventResponse,
 } from './interfaces/microsoft-graph-event.interface';
+import { MicrosoftAuthService } from './auth/microsoft-auth.service';
+import { ConfigService } from '@nestjs/config';
+import {
+  CreateSubscriptionRequest,
+  CreateSubscriptionResponse,
+} from './interfaces/microsoft-graph-subscription.interface';
 
 @Injectable()
 export class MicrosoftGraphService {
   private readonly logger = new Logger(MicrosoftGraphService.name);
   private readonly graphBaseUrl = 'https://graph.microsoft.com/v1.0';
+
+  constructor(
+    private readonly microsoftAuthService: MicrosoftAuthService,
+    private readonly configService: ConfigService,
+  ) {}
 
   async createEvent(
     accessToken: string,
@@ -65,5 +76,42 @@ export class MicrosoftGraphService {
   cancelEvent() {}
   getEvent() {}
   addAttendees() {}
-  subscribeToChange() {}
+
+  async subscribeToChange(
+    microsoftHomeAccountId: string,
+    email: string,
+  ): Promise<CreateSubscriptionResponse> {
+    const tokenResult = await this.microsoftAuthService.refreshToken(
+      microsoftHomeAccountId,
+    );
+
+    if (!tokenResult) {
+      throw new ForbiddenException('Microsoft session expired');
+    }
+
+    const accessToken = tokenResult.accessToken;
+
+    const payload: CreateSubscriptionRequest = {
+      changeType: 'updated',
+      notificationUrl: this.configService.get<string>('webhookUrl'),
+      resource: `/users/${email}/events`,
+      expirationDateTime: '',
+      clientState: '',
+      latestSupportedTlsVersion: '',
+    };
+
+    const response = await axios.post<
+      CreateSubscriptionRequest,
+      CreateSubscriptionResponse
+    >(`${this.graphBaseUrl}/subscriptions`, payload, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    return response;
+  }
+
+  renewSubcription() {}
 }

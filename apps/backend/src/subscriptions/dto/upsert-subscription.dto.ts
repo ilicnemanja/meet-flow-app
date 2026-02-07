@@ -8,7 +8,7 @@ import {
   MaxLength,
 } from 'class-validator';
 
-export class CreateSubscriptionDto {
+export class UpsertSubscriptionDto {
   @ApiProperty({ description: 'Organizer email address', maxLength: 255 })
   @IsNotEmpty()
   @IsEmail()
@@ -22,12 +22,12 @@ export class CreateSubscriptionDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(255)
-  subscriptionId: string;
+  subscriptionId?: string;
 
   @ApiProperty({ description: 'Expiration of subscription' })
   @IsNotEmpty()
   @IsDateString()
-  expiresAt: Date;
+  expiresAt?: Date;
 
   @ApiPropertyOptional({ description: 'Last Time Subscription Renewed' })
   @IsOptional()

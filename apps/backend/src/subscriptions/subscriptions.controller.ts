@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Query,
@@ -12,10 +11,10 @@ import {
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { UpsertSubscriptionDto } from './dto/upsert-subscription.dto';
 import { QuerySubscriptionDto } from './dto/query-subscription.dto';
 import { Subscription } from './entities/subscription.entity';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @ApiTags('Subscriptions')
 @Controller('subscriptions')
@@ -30,8 +29,14 @@ export class SubscriptionsController {
     type: Subscription,
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  create(@Body() createSubscriptionDto: CreateSubscriptionDto) {
-    return this.subscriptionsService.create(createSubscriptionDto);
+  upsert(
+    @Body() upsertSubscriptionDto: UpsertSubscriptionDto,
+    @CurrentUser() user: { microsoftHomeAccountId: string },
+  ) {
+    return this.subscriptionsService.upsert(
+      upsertSubscriptionDto,
+      user.microsoftHomeAccountId,
+    );
   }
 
   @Get()
@@ -57,22 +62,6 @@ export class SubscriptionsController {
   @ApiResponse({ status: 404, description: 'Subscription not found' })
   findOne(@Param('id') id: string) {
     return this.subscriptionsService.findOne(id);
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a subscription' })
-  @ApiParam({ name: 'id', description: 'Subscription ID', format: 'uuid' })
-  @ApiResponse({
-    status: 200,
-    description: 'Subscription updated successfully',
-    type: Subscription,
-  })
-  @ApiResponse({ status: 404, description: 'Subscription not found' })
-  update(
-    @Param('id') id: string,
-    @Body() updateSubscriptionDto: UpdateSubscriptionDto,
-  ) {
-    return this.subscriptionsService.update(id, updateSubscriptionDto);
   }
 
   @Delete(':id')

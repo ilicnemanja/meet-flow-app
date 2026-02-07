@@ -3,8 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { ILike, Repository } from 'typeorm';
 import { Subscription } from './entities/subscription.entity';
 import { QuerySubscriptionDto } from './dto/query-subscription.dto';
-import { CreateSubscriptionDto } from './dto/create-subscription.dto';
-import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { UpsertSubscriptionDto } from './dto/upsert-subscription.dto';
 
 @Injectable()
 export class SubscriptionsRepository {
@@ -50,14 +49,14 @@ export class SubscriptionsRepository {
     });
   }
 
-  async create(dto: CreateSubscriptionDto): Promise<Subscription> {
+  async create(dto: UpsertSubscriptionDto): Promise<Subscription> {
     const subscription = this.repository.create(dto);
     return this.repository.save(subscription);
   }
 
   async update(
     id: string,
-    dto: UpdateSubscriptionDto,
+    dto: UpsertSubscriptionDto,
   ): Promise<Subscription | null> {
     await this.repository.update(id, dto);
     return this.findOne(id);
