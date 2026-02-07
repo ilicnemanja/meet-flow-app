@@ -1,12 +1,16 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsDateString,
   IsEmail,
   IsNotEmpty,
   IsOptional,
   IsString,
   MaxLength,
+  ValidateNested,
 } from 'class-validator';
+import { CreateAttendeeDto } from '../submodules/attendees/dto/create-attendee.dto';
 
 export class CreateEngagementDto {
   @ApiProperty({ description: 'Engagement title', maxLength: 255 })
@@ -20,27 +24,28 @@ export class CreateEngagementDto {
   @IsString()
   description?: string;
 
-  @ApiProperty({ description: 'Engagement organizer email', maxLength: 255 })
-  @IsNotEmpty()
+  @IsOptional()
   @IsEmail()
   @MaxLength(255)
   organizerEmail: string;
 
-  @ApiProperty({
-    description: 'Event start date and time (ISO 8601)',
+  @ApiPropertyOptional({
+    description:
+      'Event start date and time (ISO 8601). If provided with endDateTime, the engagement will be auto-scheduled in Outlook.',
     example: '2026-03-01T09:00:00.000Z',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  startDateTime: string;
+  startDateTime?: string;
 
-  @ApiProperty({
-    description: 'Event end date and time (ISO 8601)',
+  @ApiPropertyOptional({
+    description:
+      'Event end date and time (ISO 8601). If provided with startDateTime, the engagement will be auto-scheduled in Outlook.',
     example: '2026-03-01T10:00:00.000Z',
   })
-  @IsNotEmpty()
+  @IsOptional()
   @IsDateString()
-  endDateTime: string;
+  endDateTime?: string;
 
   @ApiPropertyOptional({
     description: 'Timezone for the event',
@@ -51,4 +56,14 @@ export class CreateEngagementDto {
   @IsString()
   @MaxLength(100)
   timeZone?: string;
+
+  @ApiPropertyOptional({
+    description: 'List of attendees to add to the engagement',
+    type: [CreateAttendeeDto],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => CreateAttendeeDto)
+  attendees?: CreateAttendeeDto[];
 }

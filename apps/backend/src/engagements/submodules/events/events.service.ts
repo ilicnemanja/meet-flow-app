@@ -1,4 +1,10 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import {
   MicrosoftAuthService,
   MicrosoftGraphService,
@@ -9,7 +15,8 @@ import { EventsRepository } from './events.repository';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { EngagementEvent, SyncStatus } from './entities/event.entity';
-import { EngagementsService } from '../../engagements.service';
+import { EngagementsRepository } from '../../engagements.repository';
+import { Engagement, EngagementStatus } from '../../entities/engagement.entity';
 
 @Injectable()
 export class EventsService {
@@ -17,7 +24,7 @@ export class EventsService {
 
   constructor(
     private readonly eventsRepository: EventsRepository,
-    private readonly engagementsService: EngagementsService,
+    private readonly engagementsRepository: EngagementsRepository,
     private readonly microsoftAuthService: MicrosoftAuthService,
     private readonly microsoftGraphService: MicrosoftGraphService,
   ) {}
@@ -32,15 +39,50 @@ export class EventsService {
     return event;
   }
 
+  async createEventRecord(engagementId: string): Promise<EngagementEvent> {
+    return this.eventsRepository.create(engagementId, {});
+  }
+
   async create(
     engagementId: string,
     dto: CreateEventDto,
     microsoftHomeAccountId: string,
   ): Promise<EngagementEvent> {
-    const engagement = await this.engagementsService.findOne(engagementId);
+    const engagement = await this.engagementsRepository.findOne(engagementId);
+    if (!engagement) {
+      throw new NotFoundException(
+        `Engagement with ID "${engagementId}" not found`,
+      );
+    }
 
-    let event = await this.eventsRepository.create(engagementId, dto);
+    if (!engagement.startDateTime || !engagement.endDateTime) {
+      throw new BadRequestException(
+        'Engagement must have startDateTime and endDateTime to schedule an event. Update the engagement first.',
+      );
+    }
 
+    if (engagement.status === EngagementStatus.SCHEDULED) {
+      throw new ConflictException(
+        'Engagement is already scheduled. Cannot create another event.',
+      );
+    }
+
+    if (engagement.status === EngagementStatus.COMPLETED) {
+      throw new ConflictException(
+        'Engagement is already completed. Cannot schedule a new event.',
+      );
+    }
+
+    const event = await this.eventsRepository.create(engagementId, dto);
+
+    return this.scheduleInOutlook(engagement, event, microsoftHomeAccountId);
+  }
+
+  async scheduleInOutlook(
+    engagement: Engagement,
+    event: EngagementEvent,
+    microsoftHomeAccountId: string,
+  ): Promise<EngagementEvent> {
     try {
       const tokenResult = await this.microsoftAuthService.refreshToken(
         microsoftHomeAccountId,
@@ -48,7 +90,7 @@ export class EventsService {
 
       if (!tokenResult) {
         this.logger.warn(
-          `Microsoft session expired for engagement ${engagementId}. Event created with PENDING status.`,
+          `Microsoft session expired for engagement ${engagement.id}. Event created with PENDING status.`,
         );
         return event;
       }
@@ -91,22 +133,30 @@ export class EventsService {
         outlookEvent,
       );
 
-      event = await this.eventsRepository.update(engagementId, {
-        externalEventId: result.id,
-        onlineMeetingUrl: result.onlineMeeting?.joinUrl || null,
-        syncStatus: SyncStatus.SYNCED,
+      const updatedEvent = await this.eventsRepository.update(
+        event.engagementId,
+        {
+          externalEventId: result.id,
+          onlineMeetingUrl: result.onlineMeeting?.joinUrl || null,
+          syncStatus: SyncStatus.SYNCED,
+        },
+      );
+
+      await this.engagementsRepository.update(engagement.id, {
+        status: EngagementStatus.SCHEDULED,
       });
+
+      return updatedEvent;
     } catch (error) {
       this.logger.error(
-        `Failed to sync event to Outlook for engagement ${engagementId}: ${error.message}`,
+        `Failed to sync event to Outlook for engagement ${engagement.id}: ${error.message}`,
         error.stack,
       );
-      event = await this.eventsRepository.update(engagementId, {
+
+      return this.eventsRepository.update(event.engagementId, {
         syncStatus: SyncStatus.FAILED,
       });
     }
-
-    return event;
   }
 
   async update(

@@ -13,14 +13,22 @@ import { AttendeesRepository } from './submodules/attendees/attendees.repository
 import { EventsController } from './submodules/events/events.controller';
 import { EventsService } from './submodules/events/events.service';
 import { EventsRepository } from './submodules/events/events.repository';
+import { UsersController } from 'src/users/users.controller';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Engagement, EngagementAttendee, EngagementEvent]),
     MicrosoftGraphModule,
     MicrosoftAuthModule,
+    UsersModule,
   ],
-  controllers: [EngagementsController, AttendeesController, EventsController],
+  controllers: [
+    EngagementsController,
+    AttendeesController,
+    EventsController,
+    UsersController,
+  ],
   providers: [
     EngagementsService,
     EngagementsRepository,

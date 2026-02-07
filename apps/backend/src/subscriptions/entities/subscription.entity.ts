@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseEntity } from 'src/common/db/base-entity';
-import { Engagement } from 'src/engagements/entities/engagement.entity';
-import { Column, Entity, OneToMany } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 
 @Entity('subscriptions')
 export class Subscription extends BaseEntity {
@@ -30,10 +30,10 @@ export class Subscription extends BaseEntity {
   })
   lastRenewedAt: Date;
 
-  @ApiPropertyOptional({
-    description: 'List of engagements associated with this subscription',
-    type: () => [Engagement],
+  @OneToOne(() => User)
+  @JoinColumn({
+    name: 'organizer_email',
+    referencedColumnName: 'email',
   })
-  @OneToMany(() => Engagement, (engagement) => engagement.subscription)
-  engagements?: Engagement[];
+  organizer: User;
 }

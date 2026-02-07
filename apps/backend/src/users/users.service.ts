@@ -28,7 +28,16 @@ export class UsersService {
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.usersRepository.findByEmail(email);
+    if (!email) {
+      throw new NotFoundException(`User ${email} not found in request`);
+    }
+    const user = await this.usersRepository.findByEmail(email);
+
+    if (!user) {
+      throw new NotFoundException(`User with ${email} not found`);
+    }
+
+    return user;
   }
 
   async create(dto: CreateUserDto): Promise<User> {

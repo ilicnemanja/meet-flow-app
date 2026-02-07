@@ -15,32 +15,47 @@ import {
   ApiOperation,
   ApiResponse,
   ApiParam,
+  ApiBearerAuth,
 } from '@nestjs/swagger';
 import { EngagementsService } from './engagements.service';
 import { CreateEngagementDto } from './dto/create-engagement.dto';
 import { UpdateEngagementDto } from './dto/update-engagement.dto';
 import { QueryEngagementDto } from './dto/query-engagement.dto';
 import { Engagement } from './entities/engagement.entity';
+import { CurrentUser } from '../auth/decorators/current-user.decorator';
 
 @ApiTags('Engagements')
+@ApiBearerAuth()
 @Controller('engagements')
 export class EngagementsController {
   constructor(private readonly engagementsService: EngagementsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new engagement' })
+  @ApiOperation({
+    summary:
+      'Create a new engagement. Auto-schedules in Outlook if startDateTime and endDateTime are provided.',
+  })
   @ApiResponse({
     status: 201,
     description: 'Engagement created successfully',
     type: Engagement,
   })
   @ApiResponse({ status: 400, description: 'Bad request' })
-  create(@Body() createEngagementDto: CreateEngagementDto) {
-    return this.engagementsService.create(createEngagementDto);
+  create(
+    @Body() createEngagementDto: CreateEngagementDto,
+    @CurrentUser() user: { microsoftHomeAccountId: string; email: string },
+  ) {
+    return this.engagementsService.create(
+      createEngagementDto,
+      user.microsoftHomeAccountId,
+      user.email,
+    );
   }
 
   @Get()
-  @ApiOperation({ summary: 'Get all engagements with pagination and filtering' })
+  @ApiOperation({
+    summary: 'Get all engagements with pagination and filtering',
+  })
   @ApiResponse({
     status: 200,
     description: 'Returns paginated list of engagements',
