@@ -1,13 +1,16 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { SubscriptionsRepository } from './subscriptions.repository';
 import { QuerySubscriptionDto } from './dto/query-subscription.dto';
-import { UpsertSubscriptionDto } from './dto/upsert-subscription.dto';
 import { PaginatedResponseDto } from '../common/db/base-query-dto';
 import { Subscription } from './entities/subscription.entity';
 import { MicrosoftGraphService } from '@microsoft/graph';
 
+const RENEWAL_THRESHOLD_MINUTES = 5;
+
 @Injectable()
 export class SubscriptionsService {
+  private readonly logger = new Logger(SubscriptionsService.name);
+
   constructor(
     private readonly subscriptionsRepository: SubscriptionsRepository,
     private readonly microsoftGraphService: MicrosoftGraphService,
@@ -29,49 +32,58 @@ export class SubscriptionsService {
     return subscription;
   }
 
+  async findBySubscriptionId(
+    subscriptionId: string,
+  ): Promise<Subscription | null> {
+    return this.subscriptionsRepository.findBySubscriptionId(subscriptionId);
+  }
+
   async upsert(
-    dto: UpsertSubscriptionDto,
+    organizerEmail: string,
     microsoftHomeAccountId: string,
   ): Promise<Subscription> {
     const existingSubscription =
-      await this.subscriptionsRepository.findByOrganizerEmail(
-        dto.organizerEmail,
-      );
+      await this.subscriptionsRepository.findByOrganizerEmail(organizerEmail);
 
     if (existingSubscription) {
-      // 1. Check if subscription is not expired and expiration is not less then 5min
-      // if not then return existing subscription
-      // 2. if subscription is already expired the call microsoftGraphService.renewSubcription
-      // Pseudo code
-      // if (existingSubscription.expiresAt not less then 5min) {
-      //   return existingSubscription;
-      // }
-      // const result = await this.microsoftGraphService.renewSubcription(
-      //   microsoftHomeAccountId,
-      //   dto.organizerEmail,
-      // );
-      // const data: UpsertSubscriptionDto = {
-      //   organizerEmail: dto.organizerEmail,
-      //   subscriptionId: result.id,
-      //   expiresAt: new Date(result.expirationDateTime), // check if its okay to be string instead ?
-      //   lastRenewedAt: new Date(),
-      // };
-      // return this.subscriptionsRepository.update(data);
+      const minutesUntilExpiry =
+        (existingSubscription.expiresAt.getTime() - Date.now()) / (1000 * 60);
+
+      if (minutesUntilExpiry > RENEWAL_THRESHOLD_MINUTES) {
+        this.logger.log(
+          `Subscription for ${organizerEmail} is still valid (${Math.round(minutesUntilExpiry)} min remaining)`,
+        );
+        return existingSubscription;
+      }
+
+      this.logger.log(
+        `Subscription for ${organizerEmail} is near expiry, renewing...`,
+      );
+
+      const result = await this.microsoftGraphService.renewSubscription(
+        microsoftHomeAccountId,
+        existingSubscription.subscriptionId,
+      );
+
+      return this.subscriptionsRepository.update(existingSubscription.id, {
+        expiresAt: new Date(result.expirationDateTime),
+        lastRenewedAt: new Date(),
+      });
     }
 
-    const result = await this.microsoftGraphService.subscribeToChange(
+    const { subscription, clientState } =
+      await this.microsoftGraphService.subscribeToChange(
+        microsoftHomeAccountId,
+      );
+
+    return this.subscriptionsRepository.create({
+      organizerEmail,
+      subscriptionId: subscription.id,
+      clientState,
       microsoftHomeAccountId,
-      dto.organizerEmail,
-    );
-
-    const data: UpsertSubscriptionDto = {
-      organizerEmail: dto.organizerEmail,
-      subscriptionId: result.id,
-      expiresAt: new Date(result.expirationDateTime), // check if its okay to be string instead ?
+      expiresAt: new Date(subscription.expirationDateTime),
       lastRenewedAt: new Date(),
-    };
-
-    return this.subscriptionsRepository.create(data);
+    });
   }
 
   async remove(id: string): Promise<void> {

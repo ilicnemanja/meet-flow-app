@@ -18,6 +18,18 @@ export class Subscription extends BaseEntity {
   @Column({ name: 'subscription_id', type: 'varchar', length: 255 })
   subscriptionId: string;
 
+  @ApiProperty({ description: 'Client state secret for webhook validation' })
+  @Column({ name: 'client_state', type: 'varchar', length: 255 })
+  clientState: string;
+
+  @ApiProperty({ description: 'Microsoft Home Account ID for token refresh' })
+  @Column({
+    name: 'microsoft_home_account_id',
+    type: 'varchar',
+    length: 255,
+  })
+  microsoftHomeAccountId: string;
+
   @ApiProperty({ description: 'Expiration of subscription' })
   @Column({ name: 'expires_at', type: 'timestamp with time zone' })
   expiresAt: Date;

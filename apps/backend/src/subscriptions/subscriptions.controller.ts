@@ -2,39 +2,45 @@ import {
   Controller,
   Get,
   Post,
-  Body,
   Param,
   Delete,
   Query,
   HttpCode,
   HttpStatus,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { SubscriptionsService } from './subscriptions.service';
-import { UpsertSubscriptionDto } from './dto/upsert-subscription.dto';
 import { QuerySubscriptionDto } from './dto/query-subscription.dto';
 import { Subscription } from './entities/subscription.entity';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @ApiTags('Subscriptions')
+@ApiBearerAuth()
 @Controller('subscriptions')
 export class SubscriptionsController {
   constructor(private readonly subscriptionsService: SubscriptionsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Create a new subscription' })
+  @ApiOperation({
+    summary:
+      'Subscribe to Microsoft Graph event changes for the logged-in user. Returns existing subscription if still valid, or renews/creates as needed.',
+  })
   @ApiResponse({
     status: 201,
-    description: 'Subscription created successfully',
+    description: 'Subscription created or returned successfully',
     type: Subscription,
   })
-  @ApiResponse({ status: 400, description: 'Bad request' })
   upsert(
-    @Body() upsertSubscriptionDto: UpsertSubscriptionDto,
-    @CurrentUser() user: { microsoftHomeAccountId: string },
+    @CurrentUser() user: { microsoftHomeAccountId: string; email: string },
   ) {
     return this.subscriptionsService.upsert(
-      upsertSubscriptionDto,
+      user.email,
       user.microsoftHomeAccountId,
     );
   }

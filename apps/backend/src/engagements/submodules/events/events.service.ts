@@ -17,6 +17,7 @@ import { UpdateEventDto } from './dto/update-event.dto';
 import { EngagementEvent, SyncStatus } from './entities/event.entity';
 import { EngagementsRepository } from '../../engagements.repository';
 import { Engagement, EngagementStatus } from '../../entities/engagement.entity';
+import { SubscriptionsService } from '../../../subscriptions/subscriptions.service';
 
 @Injectable()
 export class EventsService {
@@ -27,6 +28,7 @@ export class EventsService {
     private readonly engagementsRepository: EngagementsRepository,
     private readonly microsoftAuthService: MicrosoftAuthService,
     private readonly microsoftGraphService: MicrosoftGraphService,
+    private readonly subscriptionsService: SubscriptionsService,
   ) {}
 
   async findOne(engagementId: string): Promise<EngagementEvent> {
@@ -145,6 +147,15 @@ export class EventsService {
       await this.engagementsRepository.update(engagement.id, {
         status: EngagementStatus.SCHEDULED,
       });
+
+      this.subscriptionsService
+        .upsert(engagement.organizerEmail, microsoftHomeAccountId)
+        .catch((error) =>
+          this.logger.error(
+            `Failed to auto-subscribe for ${engagement.organizerEmail}: ${error.message}`,
+            error.stack,
+          ),
+        );
 
       return updatedEvent;
     } catch (error) {

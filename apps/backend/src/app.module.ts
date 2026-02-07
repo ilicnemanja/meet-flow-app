@@ -8,6 +8,7 @@ import { EngagementsModule } from './engagements/engagements.module';
 import { UsersModule } from './users/users.module';
 import { ExpertsModule } from './experts/experts.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { WebhooksModule } from './webhooks/webhooks.module';
 import configuration from './common/config/configuration';
 
 @Module({
@@ -36,6 +37,7 @@ import configuration from './common/config/configuration';
     UsersModule,
     ExpertsModule,
     SubscriptionsModule,
+    WebhooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],

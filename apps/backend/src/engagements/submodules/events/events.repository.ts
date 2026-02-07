@@ -20,6 +20,14 @@ export class EventsRepository {
     });
   }
 
+  async findByExternalEventId(
+    externalEventId: string,
+  ): Promise<EngagementEvent | null> {
+    return this.repository.findOne({
+      where: { externalEventId },
+    });
+  }
+
   async create(
     engagementId: string,
     dto: CreateEventDto,

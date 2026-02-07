@@ -15,6 +15,7 @@ import { EventsService } from './submodules/events/events.service';
 import { EventsRepository } from './submodules/events/events.repository';
 import { UsersController } from 'src/users/users.controller';
 import { UsersModule } from 'src/users/users.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { UsersModule } from 'src/users/users.module';
     MicrosoftGraphModule,
     MicrosoftAuthModule,
     UsersModule,
+    SubscriptionsModule,
   ],
   controllers: [
     EngagementsController,
